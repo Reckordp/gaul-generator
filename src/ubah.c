@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <alay.h>
 #include <alay/pecah.h>
 
@@ -31,7 +32,7 @@ void merubah_kalimat(char *kalimat, size_t ukuran, rangka_perubahan *ev, size_t 
 	pecah_kalimat(bk, kalimat);
 
 	while (u_ev - urutan) {
-		ubah_teks(bk, rangka_perubahan + urutan);
+		ubah_teks(bk, ev + urutan);
 		urutan++;
 	}
 }
