@@ -1,3 +1,6 @@
+#ifndef ALAY_HEADER
+#define ALAY_HEADER
+
 #include <stdio.h>
 #include <string.h>
 
@@ -14,12 +17,6 @@ typedef struct {
 	char jadi;
 } rangka_perubahan;
 
-const char *daftar_file = \
-	"0: o, O\n" \
-	"1: i, I\n" \
-	"2: z, Z\n" \
-	"4: a, A\n" \
-	"5: s, S\n" \
-	"6: G\n" \
-	"7: t, d, T, D\n" \
-	"9: g";
+void merubah_kalimat(char*, size_t, rangka_perubahan*, size_t);
+
+#endif
