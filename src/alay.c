@@ -1,4 +1,5 @@
 #include <alay.h>
+#include <alay/muat.h>
 
 int main() {
 	char asal[UKURAN_KALIMAT];

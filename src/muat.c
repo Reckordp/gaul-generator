@@ -1,4 +1,6 @@
-#include <muat/load.h>
+#include <alay/muat.h>
+
+const char *daftar_file = "0: o, O\n1: i, I\n2: z, Z\n4: a, A\n5: s, S\n6: G\n7: t, d, T, D\n9: g";
 
 #define L(badan) (laporan->badan)
 #define LT(badan) (L(tempat)->badan)
