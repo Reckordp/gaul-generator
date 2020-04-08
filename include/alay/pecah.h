@@ -11,3 +11,4 @@ typedef struct {
 } bagian_kalimat;
 
 void pecah_kalimat(bagian_kalimat*, char*);
+size_t cari_pada_kalimat(char, bagian_kalimat*, char***);
