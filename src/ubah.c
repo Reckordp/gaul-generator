@@ -5,19 +5,21 @@
 void ubah_teks(bagian_kalimat *bk, rangka_perubahan *rp) {
 	size_t jumlah_ketemu, urutan;
 	char **ketemu, saat_ini;
+	bool lewati;
 
 	urutan = strlen(rp->asal);
+	lewati = false;
 	while(urutan) {
 		saat_ini = rp->asal[urutan - 1];
 		jumlah_ketemu = cari_pada_kalimat(saat_ini, bk, &ketemu);
+		if (!saat_ini) break;
 
 		while(jumlah_ketemu) {
-			if (*ketemu[jumlah_ketemu] == saat_ini) {
-				*ketemu[jumlah_ketemu] = rp->jadi;
+			if (*ketemu[jumlah_ketemu - 1] == saat_ini) {
+				*ketemu[jumlah_ketemu - 1] = rp->jadi;
 			}
 			jumlah_ketemu--;
 		}
-
 		urutan--;
 	}
 }
@@ -35,4 +37,6 @@ void merubah_kalimat(char *kalimat, size_t ukuran, rangka_perubahan *ev, size_t 
 		ubah_teks(bk, ev + urutan);
 		urutan++;
 	}
+
+	free(bk);
 }

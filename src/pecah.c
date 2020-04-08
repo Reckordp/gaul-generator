@@ -9,7 +9,7 @@ bool kaitkan_char(bagian_kalimat *dt, char huruf, char *tunjuk) {
 	tempat = dt->badan;
 	tersedia = dt->titik_tersedia;
 	while(*tersedia != huruf && *tersedia++) tempat++;
-	if (!(*tersedia)) {
+	if (!(*--tersedia)) {
 		*tersedia = huruf;
 		tempat->titik = huruf;
 	}
@@ -28,6 +28,7 @@ void pecah_kalimat(bagian_kalimat *dt, char *teks) {
 
 size_t cari_pada_kalimat(char dicari, bagian_kalimat *tempat, char*** pencari) {
 	size_t urutan;
+	urutan = 0;
 	while(tempat->titik_tersedia[urutan] && tempat->titik_tersedia[urutan] != dicari) urutan++;
 	if (!(tempat->titik_tersedia[urutan])) return 0;
 	*pencari = tempat->badan[urutan].tunjuk;
