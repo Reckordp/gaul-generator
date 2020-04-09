@@ -1,9 +1,8 @@
 #include <alay/muat.h>
-
-const char *daftar_file = "0: o, O\n1: i, I\n2: z, Z\n4: a, A\n5: s, S\n6: G\n7: t, d, T, D\n9: g";
+#include <daftar.h>
 
 #define L(badan) (laporan->badan)
-#define LT(badan) (L(tempat)->badan)
+#define LT(badan, dalam) (L(tempat_ ## badan)->dalam)
 #define SEL_JA \
 	do { \
 		L(situasi) = SELESAI; \
@@ -16,43 +15,61 @@ const char *daftar_file = "0: o, O\n1: i, I\n2: z, Z\n4: a, A\n5: s, S\n6: G\n7:
 		return true; \
 	} while(0)
 
+#define KE_PEMISAH \
+	do { \
+		L(situasi) = PEMISAH; \
+		return false; \
+	} while(0)
+
 #define AMBIL_BARANG if (fread(&L(bacaan), sizeof(char), 1, L(gudang)) == 0) SEL_JA
-#define APA_GANTI_GARIS if (((int)L(bacaan)) == 10) GANTI_GARIS
-#define BATASAN_ALPHA(c) (((c >= 97) && (c <= 122)) || ((c >= 65) && (c <= 90)))
-#define BATASAN_ANGKA(c) ((c >= 48) && (c <= 57))
 #define BATASAN (BATASAN_ALPHA((int)L(bacaan)) || BATASAN_ANGKA((int)L(bacaan)))
 
 bool olah_informasi(penyerapan_informasi *laporan) {
 	switch(laporan->situasi) {
 		case BARU:
-		LT(tanda) = true;
-		L(penunjuk) = 0;
+		L(tempat_jadi) = L(tempat)->jadi;
+		L(tempat_asal) = L(tempat)->asal;
+		L(tempat_deret) = L(tempat)->deret;
 		L(situasi) = TITIK;
+		AMBIL_BARANG;
 		break;
 	
 		case TITIK:
+		if (!BATASAN) KE_PEMISAH;
+		*L(tempat_jadi) = L(bacaan);
+		L(tempat_jadi)++;
 		AMBIL_BARANG;
-		if (!BATASAN) SEL_JA;
-		LT(jadi) = L(bacaan);
-		L(situasi) = PEMISAH;
 		break;
 	
 		case PEMISAH:
-		AMBIL_BARANG;
-		if (BATASAN) SEL_JA;
-		L(situasi) = TUJUAN;
+		switch((int)(L(bacaan))) {
+			case 10:
+			GANTI_GARIS;
+			case 44:
+			LT(deret, panjang) = (int)(L(tempat_asal) - LT(deret, tunjuk));
+			L(tempat_deret)++;
+			case 32:
+			case 58:
+			AMBIL_BARANG;
+			if (BATASAN) {
+				L(situasi) = TUJUAN;
+				LT(deret, titik) = L(bacaan);
+				LT(deret, tunjuk) = L(tempat_asal);
+			} 
+			else if (L(bacaan) != 32) SEL_JA;
+			break;
+
+			default:
+			SEL_JA;
+			break;
+		}
 		break;
 
 		case TUJUAN:
+		if (!BATASAN) KE_PEMISAH;
+		*L(tempat_asal) = L(bacaan);
+		L(tempat_asal)++;
 		AMBIL_BARANG;
-		APA_GANTI_GARIS;
-		if (L(bacaan) == 32) AMBIL_BARANG;
-		if (!BATASAN) SEL_JA;
-		LT(asal)[L(penunjuk)] = L(bacaan);
-		L(penunjuk)++;
-		AMBIL_BARANG;
-		APA_GANTI_GARIS;
-		if (L(bacaan) != 44) SEL_JA;
 		break;
 	}
 
@@ -60,10 +77,8 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 }
 
 #undef BATASAN
-#undef BATASAN_ANGKA
-#undef BATASAN_ALPHA
-#undef APA_GANTI_GARIS
 #undef AMBIL_BARANG
+#undef KE_PEMISAH
 #undef GANTI_GARIS
 #undef SEL_JA
 #undef LT
@@ -87,12 +102,9 @@ size_t dapatkan_pengubah(rangka_perubahan *tempat, size_t ukuran) {
 #endif
 
 	urutan = strlen(jalur);
-	while(*(jalur + urutan - 1) == '/') urutan--;
-	while(*filename != '\0') {
-		*(jalur + urutan) = *filename;
-		filename++;
-		urutan++;
-	}
+	while(*(jalur + urutan - 1) != '/' && *(jalur + urutan - 1) != '\\') urutan--;
+	while(*(filename++) != '\0') *(jalur + urutan++) = *(filename - 1);
+	*(jalur + urutan) = '\0';
 
 	if (access(jalur, F_OK) < 0) {
 		printf("File gak ada buat satu\n");
@@ -101,17 +113,17 @@ size_t dapatkan_pengubah(rangka_perubahan *tempat, size_t ukuran) {
 		fclose(df);
 	}
 
-	laporan.tempat = tempat;
-	laporan.penunjuk = 0;
 	laporan.gudang = fopen(jalur, "r");
 	laporan.situasi = BARU;
+	laporan.bacaan = 0;
+	laporan.tempat = tempat;
 	uk_t = ukuran;
 
 	while(uk_t > 0) {
 		if (olah_informasi(&laporan)) {
-			if (laporan.situasi == SELESAI) break;
-			laporan.tempat++;
 			uk_t--;
+			laporan.tempat++;
+			if (laporan.situasi == SELESAI) break;
 		}
 	}
 
