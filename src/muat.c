@@ -109,7 +109,7 @@ size_t dapatkan_pengubah(rangka_perubahan *tempat, size_t ukuran) {
 	*(jalur + urutan) = '\0';
 
 	if (access(jalur, F_OK) < 0) {
-		printf("File gak ada buat satu\n");
+		printf("File gak ada, buat satu\n");
 		FILE *df = fopen(jalur, "w");
 		fwrite(daftar_file, sizeof(char), strlen(daftar_file), df);
 		fclose(df);
