@@ -70,20 +70,41 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 #undef LT
 #undef L
 
+#ifdef _WIN32
+#	include <libloaderapi.h>
+#endif
+
+
 size_t dapatkan_pengubah(rangka_perubahan *tempat, size_t ukuran) {
 	penyerapan_informasi laporan;
 	size_t uk_t;
+	char jalur[256], *filename = "daftar";
+	size_t urutan;
 
-	if (access("daftar", F_OK) < 0) {
+#ifdef _WIN32
+	GetModuleFileName(0, jalur, 256);
+#else
+	readlink("/proc/self/exe", jalur, 256);
+#endif
+
+	urutan = strlen(jalur);
+	while(*(jalur + urutan - 1) == '/') urutan--;
+	while(*filename != '\0') {
+		*(jalur + urutan) = *filename;
+		filename++;
+		urutan++;
+	}
+
+	if (access(jalur, F_OK) < 0) {
 		printf("File gak ada buat satu\n");
-		FILE *df = fopen("daftar", "w");
+		FILE *df = fopen(jalur, "w");
 		fwrite(daftar_file, sizeof(char), strlen(daftar_file), df);
 		fclose(df);
 	}
 
 	laporan.tempat = tempat;
 	laporan.penunjuk = 0;
-	laporan.gudang = fopen("daftar", "r");
+	laporan.gudang = fopen(jalur, "r");
 	laporan.situasi = BARU;
 	uk_t = ukuran;
 
