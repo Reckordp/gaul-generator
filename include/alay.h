@@ -5,6 +5,7 @@
 #include <string.h>
 
 #define MAX_PENGUBAH (256)
+#define MAX_DERET_PERUBAHAN (16)
 #define UKURAN_KALIMAT (2048)
 #define true (1)
 #define false (0)
@@ -26,8 +27,8 @@ struct deret_asal {
 
 typedef struct {
 	char jadi[256];
-	char asal[2048];
-	struct deret_asal deret[16];
+	char asal[128 * MAX_DERET_PERUBAHAN];
+	struct deret_asal deret[MAX_DERET_PERUBAHAN];
 } rangka_perubahan;
 
 void merubah_kalimat(char*, size_t, rangka_perubahan*, size_t);

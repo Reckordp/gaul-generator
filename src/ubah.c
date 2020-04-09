@@ -2,25 +2,47 @@
 #include <alay.h>
 #include <alay/pecah.h>
 
-void ubah_teks(bagian_kalimat *bk, rangka_perubahan *rp) {
-	size_t jumlah_ketemu, urutan;
-	char **ketemu, saat_ini;
-	bool lewati;
+bool kata_sama_p(char *kanan, char *kiri, size_t panjang) {
+	while (panjang--) {
+		if (*kanan++ != *kiri++) return false;
+	}
+	return true;
+}
 
-	urutan = strlen(rp->asal);
-	lewati = false;
-	while(urutan) {
-		saat_ini = rp->asal[urutan - 1];
-		jumlah_ketemu = cari_pada_kalimat(saat_ini, bk, &ketemu);
-		if (!saat_ini) break;
+bool cocokkan_perubahan(bagian_kalimat *bk, rangka_perubahan *rp, char **k, char **r, size_t *pj) {
+	size_t urutan, jumlah, panjang;
+	struct deret_asal *deret;
+	char **ketemu;
+	bool cocok;
 
-		while(jumlah_ketemu) {
-			if (*ketemu[jumlah_ketemu - 1] == saat_ini) {
-				*ketemu[jumlah_ketemu - 1] = rp->jadi;
+	urutan = MAX_DERET_PERUBAHAN;
+	deret = rp->deret;
+
+	while(urutan--) {
+		jumlah = cari_pada_kalimat(deret->titik, bk, &ketemu);
+		while (jumlah--) {
+			panjang = deret->panjang;
+
+			if (strlen(ketemu[jumlah]) < panjang) continue;
+			if (kata_sama_p(deret->tunjuk, ketemu[jumlah], panjang)) {
+				*pj = panjang;
+				*k = deret->tunjuk;
+				*r = ketemu[jumlah];
+				return true;
 			}
-			jumlah_ketemu--;
 		}
-		urutan--;
+		deret++;
+	}
+
+	*pj = -1;
+	return false;
+}
+
+void ubah_teks(bagian_kalimat *bk, rangka_perubahan *rp) {
+	size_t panjang;
+	char *tempat, *tujuan;
+	if (cocokkan_perubahan(bk, rp, &tempat, &tujuan, &panjang)) {
+		memcpy(tempat, tujuan, panjang);
 	}
 }
 
