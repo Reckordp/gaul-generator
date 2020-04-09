@@ -16,14 +16,13 @@ const char *daftar_file = "0: o, O\n1: i, I\n2: z, Z\n4: a, A\n5: s, S\n6: G\n7:
 		return true; \
 	} while(0)
 
-#define AMBIL_BARANG if (fread(&bacaan, sizeof(char), 1, L(gudang)) == 0) SEL_JA
-#define APA_GANTI_GARIS if (((int)bacaan) == 10) GANTI_GARIS
+#define AMBIL_BARANG if (fread(&L(bacaan), sizeof(char), 1, L(gudang)) == 0) SEL_JA
+#define APA_GANTI_GARIS if (((int)L(bacaan)) == 10) GANTI_GARIS
 #define BATASAN_ALPHA(c) (((c >= 97) && (c <= 122)) || ((c >= 65) && (c <= 90)))
 #define BATASAN_ANGKA(c) ((c >= 48) && (c <= 57))
-#define BATASAN (BATASAN_ALPHA((int)bacaan) || BATASAN_ANGKA((int)bacaan))
+#define BATASAN (BATASAN_ALPHA((int)L(bacaan)) || BATASAN_ANGKA((int)L(bacaan)))
 
 bool olah_informasi(penyerapan_informasi *laporan) {
-	char bacaan;
 	switch(laporan->situasi) {
 		case BARU:
 		LT(tanda) = true;
@@ -34,7 +33,7 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 		case TITIK:
 		AMBIL_BARANG;
 		if (!BATASAN) SEL_JA;
-		LT(jadi) = bacaan;
+		LT(jadi) = L(bacaan);
 		L(situasi) = PEMISAH;
 		break;
 	
@@ -47,13 +46,13 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 		case TUJUAN:
 		AMBIL_BARANG;
 		APA_GANTI_GARIS;
-		if (bacaan == 32) AMBIL_BARANG;
+		if (L(bacaan) == 32) AMBIL_BARANG;
 		if (!BATASAN) SEL_JA;
-		LT(asal)[L(penunjuk)] = bacaan;
+		LT(asal)[L(penunjuk)] = L(bacaan);
 		L(penunjuk)++;
 		AMBIL_BARANG;
 		APA_GANTI_GARIS;
-		if (bacaan != 44) SEL_JA;
+		if (L(bacaan) != 44) SEL_JA;
 		break;
 	}
 

@@ -14,6 +14,7 @@ typedef struct {
 	int penunjuk;
 	FILE *gudang;
 	jenis_penangkapan situasi;
+	char bacaan;
 } penyerapan_informasi;
 
 size_t dapatkan_pengubah(rangka_perubahan*, size_t);
