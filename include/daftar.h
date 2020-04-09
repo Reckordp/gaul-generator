@@ -1,7 +1,8 @@
 const char *daftar_file = 
 	"aq: aku\n"
 	"Aq: Aku, AKU\n"
-	"w: Gue, gue, Gw, GW\n"
+	"W: Gue\n"
+	"w: gue\n"
 	"0: o, O\n"
 	"1: i, I\n"
 	"2: z, Z\n"
