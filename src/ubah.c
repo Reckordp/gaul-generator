@@ -19,15 +19,16 @@ bool cocokkan_perubahan(bagian_kalimat *bk, rangka_perubahan *rp, char **k, char
 	deret = rp->deret;
 
 	while(urutan--) {
+		panjang = deret->panjang;
+		if (!panjang) break;
+
 		jumlah = cari_pada_kalimat(deret->titik, bk, &ketemu);
 		while (jumlah--) {
-			panjang = deret->panjang;
-
 			if (strlen(ketemu[jumlah]) < panjang) continue;
 			if (kata_sama_p(deret->tunjuk, ketemu[jumlah], panjang)) {
 				*pj = panjang;
-				*k = deret->tunjuk;
-				*r = ketemu[jumlah];
+				*k = ketemu[jumlah];
+				*r = rp->jadi;
 				return true;
 			}
 		}
@@ -38,16 +39,22 @@ bool cocokkan_perubahan(bagian_kalimat *bk, rangka_perubahan *rp, char **k, char
 	return false;
 }
 
-void ubah_teks(bagian_kalimat *bk, rangka_perubahan *rp) {
-	size_t panjang;
-	char *tempat, *tujuan;
-	if (cocokkan_perubahan(bk, rp, &tempat, &tujuan, &panjang)) {
-		memcpy(tempat, tujuan, panjang);
-	}
+void ubah_teks(char *asal, char *jadi, size_t panjang) {
+	bool perbesar;
+	size_t lebar = strlen(asal), timpa = strlen(jadi), lebih;
+	perbesar = panjang < timpa;
+	lebih = (perbesar ? timpa - panjang : 0);
+
+	char jaga[lebar + lebih];
+	memcpy(jaga + lebih, asal, lebar + lebih);
+	memcpy(jaga + panjang - timpa + lebih, jadi, timpa);
+	if (panjang > timpa) memcpy(asal, jaga + panjang - timpa, lebar + timpa - panjang + 1);
+	else memcpy(asal, jaga, lebar);
 }
 
 void merubah_kalimat(char *kalimat, size_t ukuran, rangka_perubahan *ev, size_t u_ev) {
-	size_t urutan;
+	size_t urutan, panjang;
+	char *asal, *jadi;
 	bagian_kalimat *bk;
 
 	urutan = 0;
@@ -56,8 +63,12 @@ void merubah_kalimat(char *kalimat, size_t ukuran, rangka_perubahan *ev, size_t 
 	pecah_kalimat(bk, kalimat);
 
 	while (u_ev - urutan) {
-		ubah_teks(bk, ev + urutan);
-		urutan++;
+		if (cocokkan_perubahan(bk, ev + urutan, &asal, &jadi, &panjang)) {
+			ubah_teks(asal, jadi, panjang);
+			pecah_kalimat(bk, kalimat);
+		} else {
+			urutan++;
+		}
 	}
 
 	free(bk);

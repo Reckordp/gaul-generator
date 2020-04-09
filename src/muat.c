@@ -44,6 +44,8 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 		case PEMISAH:
 		switch((int)(L(bacaan))) {
 			case 10:
+			LT(deret, panjang) = (int)(L(tempat_asal) - LT(deret, tunjuk));
+			L(tempat_deret)++;
 			GANTI_GARIS;
 			case 44:
 			LT(deret, panjang) = (int)(L(tempat_asal) - LT(deret, tunjuk));
