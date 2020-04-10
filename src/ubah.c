@@ -9,7 +9,7 @@ bool kata_sama_p(char *kanan, char *kiri, size_t panjang) {
 	return true;
 }
 
-bool cocokkan_perubahan(bagian_kalimat *bk, rangka_perubahan *rp, char **k, char **r, size_t *pj) {
+bool cocokkan(bagian_kalimat *bk, struct rangka_perubahan *rp, char **k, char **r, size_t *pj) {
 	size_t urutan, jumlah, panjang;
 	struct deret_asal *deret;
 	char **ketemu;
@@ -22,7 +22,7 @@ bool cocokkan_perubahan(bagian_kalimat *bk, rangka_perubahan *rp, char **k, char
 		panjang = deret->panjang;
 		if (!panjang) break;
 
-		jumlah = cari_pada_kalimat(deret->titik, bk, &ketemu);
+		jumlah = cari_pada_kalimat(deret->titik, bk, (void**)(&ketemu));
 		while (jumlah--) {
 			if (strlen(ketemu[jumlah]) < panjang) continue;
 			if (kata_sama_p(deret->tunjuk, ketemu[jumlah], panjang)) {
@@ -52,7 +52,7 @@ void ubah_teks(char *asal, char *jadi, size_t panjang) {
 	else memcpy(asal, jaga, lebar);
 }
 
-void merubah_kalimat(char *kalimat, size_t ukuran, rangka_perubahan *ev, size_t u_ev) {
+void merubah_kalimat(char *kalimat, size_t ukuran, struct rangka_perubahan *ev, size_t u_ev) {
 	size_t urutan, panjang;
 	char *asal, *jadi;
 	bagian_kalimat *bk;
@@ -63,7 +63,7 @@ void merubah_kalimat(char *kalimat, size_t ukuran, rangka_perubahan *ev, size_t 
 	pecah_kalimat(bk, kalimat);
 
 	while (u_ev - urutan) {
-		if (cocokkan_perubahan(bk, ev + urutan, &asal, &jadi, &panjang)) {
+		if (cocokkan(bk, ev + urutan, &asal, &jadi, &panjang)) {
 			ubah_teks(asal, jadi, panjang);
 			pecah_kalimat(bk, kalimat);
 		} else {

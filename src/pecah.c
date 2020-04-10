@@ -26,11 +26,11 @@ void pecah_kalimat(bagian_kalimat *dt, char *teks) {
 	dt->asli = teks;
 }
 
-size_t cari_pada_kalimat(char dicari, bagian_kalimat *tempat, char*** pencari) {
+size_t cari_pada_kalimat(char dicari, bagian_kalimat *tempat, void** pencari) {
 	size_t urutan;
 	urutan = 0;
 	while(tempat->titik_tersedia[urutan] && tempat->titik_tersedia[urutan] != dicari) urutan++;
 	if (!(tempat->titik_tersedia[urutan])) return 0;
-	*pencari = tempat->badan[urutan].tunjuk;
+	*pencari = (void*)tempat->badan[urutan].tunjuk;
 	return tempat->badan[urutan].ukuran;
 }

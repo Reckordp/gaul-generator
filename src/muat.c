@@ -91,7 +91,7 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 #endif
 
 
-size_t dapatkan_pengubah(rangka_perubahan *tempat, size_t ukuran) {
+size_t dapatkan_pengubah(struct rangka_perubahan *tempat, size_t ukuran) {
 	penyerapan_informasi laporan;
 	size_t uk_t;
 	char jalur[256], *filename = "daftar";
