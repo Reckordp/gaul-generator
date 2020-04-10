@@ -1,6 +1,6 @@
 struct kait_titik {
 	char titik;
-	char *tunjuk[2048];
+	char *tunjuk[64];
 	size_t ukuran;
 };
 

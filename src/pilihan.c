@@ -20,9 +20,6 @@ char singkat_tanda(char *tanda) {
 		return SAMA(tanda, "ke");
 		case 'm':
 		return SAMA(tanda, "mim");
-		case 't':
-		if (kata_sama_p(tanda, "tidak-", 6)) return '\0';
-		return '!';
 		case 'v':
 		return SAMA(tanda, "version");
 	}
@@ -65,6 +62,14 @@ void pahami_tanda(char tanda, gaul_program** bb) {
 	*bb = NULL;
 }
 
+void tanda_berlanjut(gaul_program *g, char* tanda) {
+	if (!kata_sama_p(tanda, "tidak-", 6)) return;
+	tanda = tanda + 6;
+	if (kata_sama_p(tanda, "ANGKA", 5) && g->fitur & FITUR_ANGKA) g->fitur ^= FITUR_ANGKA;
+	else if (kata_sama_p(tanda, "KATA", 4) && g->fitur & FITUR_KATA) g->fitur ^= FITUR_KATA;
+	else printf("%s bukan fitur\n", tanda);
+}
+
 void urai_berlanjut(int argc, char** argv, gaul_program *bungkus, char *tempat) {
 	char *t;
 
@@ -72,6 +77,8 @@ void urai_berlanjut(int argc, char** argv, gaul_program *bungkus, char *tempat) 
 	while(*t != '/' && *t != '\\') *t-- = '\0';
 
 	memcpy(bungkus->tempat, tempat, strlen(tempat));
+	bungkus->fitur = FITUR_SEMUA;
+	while(argc--) tanda_berlanjut(bungkus, *argv++);
 }
 
 gaul_program *urai_args(int argc, char** argv) {
@@ -98,6 +105,6 @@ gaul_program *urai_args(int argc, char** argv) {
 		printf("Tidak mengerti perintah anda. Untuk menampilkan penggunaan (-bantu)\n");
 	}
 
-	if (bungkus) urai_berlanjut(argc, argv, bungkus, tempat);
+	if (bungkus) urai_berlanjut(--argc, ++argv, bungkus, tempat);
 	return bungkus;
 }

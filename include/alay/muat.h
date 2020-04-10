@@ -20,4 +20,4 @@ typedef struct {
 	struct deret_asal *tempat_deret;
 } penyerapan_informasi;
 
-size_t dapatkan_pengubah(struct rangka_perubahan*, size_t);
+size_t dapatkan_pengubah(gaul_program*);

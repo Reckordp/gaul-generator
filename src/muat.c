@@ -45,7 +45,6 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 		switch((int)(L(bacaan))) {
 			case 10:
 			LT(deret, panjang) = (int)(L(tempat_asal) - LT(deret, tunjuk));
-			L(tempat_deret)++;
 			GANTI_GARIS;
 			case 44:
 			LT(deret, panjang) = (int)(L(tempat_asal) - LT(deret, tunjuk));
@@ -91,22 +90,16 @@ bool olah_informasi(penyerapan_informasi *laporan) {
 #endif
 
 
-size_t dapatkan_pengubah(struct rangka_perubahan *tempat, size_t ukuran) {
+size_t dapatkan_pengubah(gaul_program *gaul) {
 	penyerapan_informasi laporan;
-	size_t uk_t;
+	struct deret_asal *da;
+	size_t uk_t, urutan;
 	char jalur[256], *filename = "daftar";
-	size_t urutan;
+	short fitur;
+	bool izin;
 
-#ifdef _WIN32
-	GetModuleFileName(0, jalur, 256);
-#else
-	readlink("/proc/self/exe", jalur, 256);
-#endif
-
-	urutan = strlen(jalur);
-	while(*(jalur + urutan - 1) != '/' && *(jalur + urutan - 1) != '\\') urutan--;
-	while(*(filename++) != '\0') *(jalur + urutan++) = *(filename - 1);
-	*(jalur + urutan) = '\0';
+	memcpy(jalur, gaul->tempat, strlen(gaul->tempat) + 1);
+	memcpy(jalur + strlen(jalur), filename, strlen(filename) + 1);
 
 	if (access(jalur, F_OK) < 0) {
 		printf("File gak ada, buat satu\n");
@@ -118,17 +111,41 @@ size_t dapatkan_pengubah(struct rangka_perubahan *tempat, size_t ukuran) {
 	laporan.gudang = fopen(jalur, "r");
 	laporan.situasi = BARU;
 	laporan.bacaan = 0;
-	laporan.tempat = tempat;
-	uk_t = ukuran;
+	laporan.tempat = gaul->evolusi;
+	gaul->ukuran = 0;
+	uk_t = MAX_DERET_PERUBAHAN;
+	fitur = gaul->fitur;
 
 	while(uk_t > 0) {
 		if (olah_informasi(&laporan)) {
-			uk_t--;
-			laporan.tempat++;
+			izin = true;
+			if (!(fitur & FITUR_ANGKA)) {
+				izin = !BATASAN_ANGKA(laporan.tempat->jadi[0]);
+				da = laporan.tempat_deret;
+				while((da - laporan.tempat->deret) && izin) {
+					izin = (!BATASAN_ANGKA(da->titik));
+					da--;
+				}
+			}
+			if (!(fitur & FITUR_KATA) && izin) {
+				izin = (strlen(laporan.tempat->jadi) < 2);
+				da = laporan.tempat_deret;
+				while((da - laporan.tempat->deret) && izin) {
+					izin = (da->panjang < 2);
+					da--;
+				}
+			}
+
+			if (izin) {
+				uk_t--;
+				laporan.tempat++;
+				gaul->ukuran++;
+			}
+
 			if (laporan.situasi == SELESAI) break;
 		}
 	}
 
 	fclose(laporan.gudang);
-	return ukuran - uk_t;
 }
+

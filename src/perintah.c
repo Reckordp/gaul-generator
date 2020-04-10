@@ -26,10 +26,10 @@ void tampilkan_penggunaan() {
 #ifndef MATIKAN_PNG
 		"  -m <f.png>, -mim <f.png> 	Langsung terapkan pada .png"
 #endif
-		"  -t-<fitur>, -tidak<fitur>	Menghapus fitur", 
 		"  -v, -version			Menampilkan versi", 
 		" ", 
 		"Fitur:", 
+		"  tidak-<FITUR>	Mematikan fitur", 
 		"  ANGKA				Ubah huruf menjadi angka", 
 		"  KATA				Ubah beberapa huruf", 
 		NULL
@@ -46,6 +46,7 @@ void tampilkan_versi() {
 void penggunaan_normal(gaul_program *g) {
 	printf("Kalimat : ");
 	gets(g->teks);
+	if (!g->teks[0]) return;
 	g->balik_benda = NULL;
 	g->balik = hasil_mode_normal;
 }
@@ -85,11 +86,13 @@ void penggunaan_file(gaul_program *g) {
 		return;
 	}
 	printf("%dBytes\n", ukuran);
-	fread(g->teks, 1, 1024, fp);
+	fseek(fp, SEEK_SET, 0);
+	fread(g->teks, 1, ukuran, fp);
+	g->teks[ukuran] = 0;
 	fclose(fp);
 
 	benda = malloc(strlen(nama_file) + 1);
-	memcpy(benda, nama_file, strlen(nama_file));
+	memcpy(benda, nama_file, strlen(nama_file) + 1);
 	g->balik_benda = (void*)benda;
 	g->balik = hasil_mode_file;
 	printf("Mengubah...\n");

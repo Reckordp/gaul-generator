@@ -45,31 +45,27 @@ void ubah_teks(char *asal, char *jadi, size_t panjang) {
 	perbesar = panjang < timpa;
 	lebih = (perbesar ? timpa - panjang : 0);
 
-	char jaga[lebar + lebih];
-	memcpy(jaga + lebih, asal, lebar + lebih);
+	char jaga[lebar + lebih + 1];
+	memcpy(jaga + lebih, asal, lebar + lebih + 1);
 	memcpy(jaga + panjang - timpa + lebih, jadi, timpa);
-	if (panjang > timpa) memcpy(asal, jaga + panjang - timpa, lebar + timpa - panjang + 1);
-	else memcpy(asal, jaga, lebar);
+	if (perbesar) memcpy(asal, jaga, lebar + lebih + 1);
+	else memcpy(asal, jaga + panjang - timpa, lebar + timpa - panjang + 1);
 }
 
-void merubah_kalimat(char *kalimat, size_t ukuran, struct rangka_perubahan *ev, size_t u_ev) {
+void merubah_kalimat(gaul_program *gaul) {
 	size_t urutan, panjang;
 	char *asal, *jadi;
-	bagian_kalimat *bk;
+	bagian_kalimat bk;
 
+	memset(&bk, 0, sizeof(bagian_kalimat));
+	pecah_kalimat(&bk, gaul->teks);
 	urutan = 0;
-	bk = malloc(sizeof(bagian_kalimat));
-	memset(bk, 0, sizeof(bagian_kalimat));
-	pecah_kalimat(bk, kalimat);
 
-	while (u_ev - urutan) {
-		if (cocokkan(bk, ev + urutan, &asal, &jadi, &panjang)) {
+	while(gaul->ukuran - urutan) {
+		if (cocokkan(&bk, gaul->evolusi + urutan, &asal,  &jadi, &panjang)) {
 			ubah_teks(asal, jadi, panjang);
-			pecah_kalimat(bk, kalimat);
-		} else {
-			urutan++;
-		}
+			pecah_kalimat(&bk, gaul->teks);
+		} else urutan++;
 	}
-
-	free(bk);
 }
+

@@ -12,6 +12,10 @@
 #define true (1)
 #define false (0)
 
+#define FITUR_SEMUA (0x3)
+#define FITUR_KATA (0x2)
+#define FITUR_ANGKA (0x1)
+
 #define HURUF_BESAR_P(c) ((c >= 65) && (c <= 90))
 #define HURUF_KECIL_P(c) ((c >= 97) && (c <= 122))
 #define BATASAN_ALPHA(c) (HURUF_BESAR_P(c) || HURUF_KECIL_P(c))
@@ -37,8 +41,7 @@ struct rangka_perubahan {
 };
 
 typedef struct gp {
-	bool fitur_kata;
-	bool fitur_angka;
+	short fitur;
 	char teks[1024];
 
 	pengambil_perintah fungsi;
@@ -46,10 +49,11 @@ typedef struct gp {
 	void *balik_benda;
 
 	char tempat[256];
-	char asal[UKURAN_KALIMAT];
 	struct rangka_perubahan evolusi[MAX_PENGUBAH];
+	size_t ukuran;
+	bool berlanjut;
 } gaul_program;
 
-void merubah_kalimat(char*, size_t, struct rangka_perubahan*, size_t);
+void merubah_kalimat(gaul_program*);
 
 #endif
