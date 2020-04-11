@@ -6,8 +6,8 @@ Mengubah huruf a/A menjadi 4, i/I menjadi 1, g menjadi 9, G menjadi 6 dst...
 ## TODO
 * ~Pengecekan per kata~
 * Auto-mim
-* Tulis jadi file
-* Matikan angka
+* ~Tulis jadi file~
+* ~Matikan angka~
 * Analisa kapital
 
 ## Build
