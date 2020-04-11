@@ -78,7 +78,7 @@ void urai_berlanjut(int argc, char** argv, gaul_program *bungkus, char *tempat) 
 
 	memcpy(bungkus->tempat, tempat, strlen(tempat));
 	bungkus->fitur = FITUR_SEMUA;
-	while(argc--) tanda_berlanjut(bungkus, *argv++);
+	while(argc > 0 && argc--) tanda_berlanjut(bungkus, *argv++);
 }
 
 gaul_program *urai_args(int argc, char** argv) {

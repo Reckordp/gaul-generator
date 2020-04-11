@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <alay.h>
 #include <alay/pecah.h>
 
@@ -41,7 +40,9 @@ bool cocokkan(bagian_kalimat *bk, struct rangka_perubahan *rp, char **k, char **
 
 void ubah_teks(char *asal, char *jadi, size_t panjang) {
 	bool perbesar;
-	size_t lebar = strlen(asal), timpa = strlen(jadi), lebih;
+	size_t lebar, timpa, lebih;
+	lebar = strlen(asal);
+	timpa = strlen(jadi);
 	perbesar = panjang < timpa;
 	lebih = (perbesar ? timpa - panjang : 0);
 
@@ -56,8 +57,7 @@ void merubah_kalimat(gaul_program *gaul) {
 	size_t urutan, panjang;
 	char *asal, *jadi;
 	bagian_kalimat bk;
-
-	memset(&bk, 0, sizeof(bagian_kalimat));
+	
 	pecah_kalimat(&bk, gaul->teks);
 	urutan = 0;
 
