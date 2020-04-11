@@ -31,3 +31,5 @@ rake
 * v0.2	Kerangka perubahan dari file
 * v0.3	Efisiensi pembacaan kalimat
 * v1.0	Perubahan kata
+* v1.1	Tambah cara untuk merubah
+* v1.2	Perubahan mecah kalimat
