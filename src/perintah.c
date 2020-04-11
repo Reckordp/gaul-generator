@@ -84,18 +84,13 @@ void penggunaan_file(gaul_program *g) {
 	}
 
 	printf("Menghitung ukuran... ");
-
-	fp = fopen(nama_file, "r");
-	fseek(fp, 0, SEEK_END);
-	ukuran = ftell(fp);
-
+	ukuran = st.st_size;
 	if (ukuran > 1024) {
 		printf("%dKB\nUkuran terlalu besar", ukuran / 1024);
 		return;
-	}
-	printf("%dBytes\n", ukuran);
-	fseek(fp, 0, SEEK_SET);
-	
+	} else printf("%dBytes\n", ukuran);
+
+	fp = fopen(nama_file, "r");
 	fread(g->teks, 1, ukuran, fp);
 	g->teks[ukuran] = 0;
 	fclose(fp);
