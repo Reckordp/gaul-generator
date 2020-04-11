@@ -18,8 +18,10 @@ char singkat_tanda(char *tanda) {
 		return SAMA(tanda, "normal");
 		case 'k':
 		return SAMA(tanda, "ke");
+#ifndef MATIKAN_PNG
 		case 'm':
 		return SAMA(tanda, "mim");
+#endif
 		case 'v':
 		return SAMA(tanda, "version");
 	}

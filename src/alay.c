@@ -8,6 +8,7 @@ int jalankan_perintah(gaul_program *gaul) {
 	if (!gaul->balik) return 1;
 	merubah_kalimat(gaul);
 	gaul->balik(gaul->teks, gaul->balik_benda);
+	gaul->balik_benda = NULL;
 }
 
 int main(int argc, char **argv) {

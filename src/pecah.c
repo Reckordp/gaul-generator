@@ -13,6 +13,7 @@ bool kaitkan_char(bagian_kalimat *dt, char huruf, char *tunjuk) {
 	if (!(*--tersedia)) {
 		*tersedia = huruf;
 		tempat->titik = huruf;
+		tempat->ukuran = 0;
 	}
 
 	tempat->tunjuk[tempat->ukuran] = tunjuk;
@@ -37,5 +38,3 @@ size_t cari_pada_kalimat(char dicari, bagian_kalimat *tempat, void** pencari) {
 	*pencari = (void*)tempat->badan[urutan].tunjuk;
 	return tempat->badan[urutan].ukuran;
 }
-
-

@@ -9,6 +9,10 @@ void hasil_mode_normal(char *hasil, void *benda) {
 }
 
 void hasil_mode_file(char *hasil, void *benda) {
+	FILE* f;
+	f = fopen((char*)benda, "w");
+	fwrite(hasil, sizeof(char), strlen(hasil), f);
+	fclose(f);
 	free(benda);
 }
 
@@ -21,15 +25,15 @@ void tampilkan_penggunaan() {
 		"Pastikan tidak menggunakan antivirus. Kalo ada uninstal gih.", 
 		"Penggunaan:", 
 		"  -b, -bantu 			Menampilkan penggunaan", 
-		"  -k <f>, -ke <f>		Mengubah tulisan didalam file", 
+		"  -k, -ke			Mengubah tulisan didalam file", 
 		"  -n, -normal			Ngetik di terminal/cmd", 
 #ifndef MATIKAN_PNG
-		"  -m <f.png>, -mim <f.png> 	Langsung terapkan pada .png"
+		"  -m, -mim 	Langsung terapkan pada .png"
 #endif
 		"  -v, -version			Menampilkan versi", 
 		" ", 
 		"Fitur:", 
-		"  tidak-<FITUR>	Mematikan fitur", 
+		"  tidak-<FITUR>			Mematikan fitur", 
 		"  ANGKA				Ubah huruf menjadi angka", 
 		"  KATA				Ubah beberapa huruf", 
 		NULL
@@ -57,9 +61,13 @@ void penggunaan_file(gaul_program *g) {
 	long ukuran;
 	struct stat st;
 
-	printf("Ukuran Maksimal 1KB\n");
-	printf("Nama File : ");
-	gets(nama_file);
+	*nama_file = 0;
+	while (!strlen(nama_file)) {
+		printf("Ukuran Maksimal 1KB\n");
+		printf("Nama File : ");
+		gets(nama_file);
+		if (!*nama_file) printf("Masukin lagi\n\n");
+	}
 
 	if (stat(nama_file, &st) < 0) {
 		memcpy(pegang, nama_file, strlen(nama_file) + 1);
@@ -78,7 +86,7 @@ void penggunaan_file(gaul_program *g) {
 	printf("Menghitung ukuran... ");
 
 	fp = fopen(nama_file, "r");
-	fseek(fp, SEEK_END, 0);
+	fseek(fp, 0, SEEK_END);
 	ukuran = ftell(fp);
 
 	if (ukuran > 1024) {
@@ -86,7 +94,8 @@ void penggunaan_file(gaul_program *g) {
 		return;
 	}
 	printf("%dBytes\n", ukuran);
-	fseek(fp, SEEK_SET, 0);
+	fseek(fp, 0, SEEK_SET);
+	
 	fread(g->teks, 1, ukuran, fp);
 	g->teks[ukuran] = 0;
 	fclose(fp);
